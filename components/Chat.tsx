@@ -53,25 +53,27 @@ export default function Chat() {
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardContent className="p-4">
-        <ScrollArea className="h-[400px] pr-4" ref={scrollAreaRef}>
-          {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`mb-4 ${
-                message.role === 'user' ? 'text-right' : 'text-left'
-              }`}
-            >
-              <span
-                className={`inline-block p-2 rounded-lg ${
-                  message.role === 'user'
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-200 text-gray-800'
+        <ScrollArea className="h-[400px] pr-4">
+          <div ref={scrollAreaRef}>
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`mb-4 ${
+                  message.role === 'user' ? 'text-right' : 'text-left'
                 }`}
               >
-                {message.content}
-              </span>
-            </div>
-          ))}
+                <span
+                  className={`inline-block p-2 rounded-lg ${
+                    message.role === 'user'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-gray-200 text-gray-800'
+                  }`}
+                >
+                  {message.content}
+                </span>
+              </div>
+            ))}
+          </div>
         </ScrollArea>
         <div className="mt-4 flex">
           <Input
