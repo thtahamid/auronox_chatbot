@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { BrainCircuit, FileText, Pill, UserRound, Sun, Moon, MessageSquare, Users } from 'lucide-react'
 import { useTheme } from 'next-themes'
+import Image from 'next/image'
 
 export default function LandingPage() {
   const { theme, setTheme } = useTheme()
@@ -59,20 +60,33 @@ export default function LandingPage() {
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-gray-900 dark:text-white">
-                  Welcome to Auranox AI
-                </h1>
-                <p className="mx-auto max-w-[700px] text-gray-700 dark:text-gray-300 md:text-xl">
-                  Your personal AI-powered healthcare assistant. Get expert advice, analyze medical reports, and manage your wellness journey.
-                </p>
+            <div className="flex flex-col-reverse md:flex-row items-center justify-between space-y-8 md:space-y-0 md:space-x-8">
+              <div className="flex flex-col items-center md:items-start space-y-4 text-center md:text-left md:w-1/2">
+                <div className="space-y-2">
+                  <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-gray-900 dark:text-white">
+                    Welcome to Auranox AI
+                  </h1>
+                  <p className="mx-auto max-w-[700px] text-gray-700 dark:text-gray-300 md:text-xl">
+                    Your personal AI-powered healthcare assistant. Get expert advice, analyze medical reports, and manage your wellness journey.
+                  </p>
+                </div>
+                <div className="w-full max-w-sm">
+                  <Button className="w-full" size="lg">
+                    <MessageSquare className="mr-2 h-5 w-5" />
+                    Start Chatting
+                  </Button>
+                </div>
               </div>
-              <div className="w-full max-w-sm">
-                <Button className="w-full" size="lg">
-                  <MessageSquare className="mr-2 h-5 w-5" />
-                  Start Chatting
-                </Button>
+              <div className="md:w-1/2 flex justify-center md:justify-end">
+                <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-96 md:h-96 lg:w-[450px] lg:h-[450px]">
+                  <Image
+                    src="/images/auranox-mascot.png"
+                    alt="Auranox AI Mascot"
+                    layout="fill"
+                    objectFit="contain"
+                    className="float-animation"
+                  />
+                </div>
               </div>
             </div>
           </div>
