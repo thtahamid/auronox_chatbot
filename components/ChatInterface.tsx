@@ -5,11 +5,9 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { ScrollArea } from "./ui/scroll-area"
 import { MessageSquare, Plus, Send, Trash2, Edit2, PanelLeftClose, FileText, Pill, UserRound, Youtube } from 'lucide-react'
-import { GoogleGenerativeAI } from "@google/generative-ai"
 import { useTheme } from 'next-themes'
 import ReactMarkdown from 'react-markdown';
 import LoadingDialog from './LoadingDialog';
-import Image from 'next/image';
 
 type Message = {
   role: 'user' | 'assistant'
@@ -87,7 +85,6 @@ export default function ChatInterface() {
   const [editingTitle, setEditingTitle] = useState<string | null>(null)
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [chatMode, setChatMode] = useState<ChatMode>('general')
-  const [file, setFile] = useState<File | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { theme } = useTheme()
   const [suggestions, setSuggestions] = useState<YouTubeVideo[]>([])
@@ -221,14 +218,10 @@ Now, respond to the following user query: ${input}`;
   };
 
   const sendMessage = async () => {
-    if (!input.trim() && !file) return;
+    if (!input.trim()) return;
 
     let userMessage: Message;
-    if (file) {
-      userMessage = { role: 'user', content: `Analyzing file: ${file.name}` };
-    } else {
-      userMessage = { role: 'user', content: input };
-    }
+    userMessage = { role: 'user', content: input };
 
     let updatedChat: Chat;
     if (currentChat) {
@@ -247,7 +240,6 @@ Now, respond to the following user query: ${input}`;
     setCurrentChat(updatedChat);
     setChats(prevChats => [updatedChat, ...prevChats.filter(chat => chat.id !== updatedChat.id)]);
     setInput('');
-    setFile(null);
     setIsLoading(true);
     setError(null);
 
@@ -292,13 +284,6 @@ Now, respond to the following user query: ${input}`;
     } catch (error) {
       console.error('Error fetching YouTube videos:', error);
       return [];
-    }
-  }
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      setFile(file)
     }
   }
 
@@ -452,14 +437,6 @@ Now, respond to the following user query: ${input}`;
         )}
         <div className="p-4 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
           <form onSubmit={(e) => { e.preventDefault(); sendMessage(); }} className="flex space-x-2">
-            {chatMode === 'medical-report' && (
-              <Input
-                type="file"
-                onChange={handleFileUpload}
-                accept=".pdf"
-                className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              />
-            )}
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
