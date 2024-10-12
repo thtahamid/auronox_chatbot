@@ -27,24 +27,27 @@ export default function Chat() {
     }
   }, [messages])
 
-  const sendMessage = async () => {
-    if (input.trim() === '') return
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!input.trim()) return
 
-    setIsLoading(true)
     const userMessage: Message = { role: 'user', content: input }
-    setMessages(prev => [...prev, userMessage])
+    setMessages((prev) => [...prev, userMessage])
     setInput('')
+    setIsLoading(true)
 
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const model = genAI.getGenerativeModel({ model: "gemini-pro"});
       const result = await model.generateContent(input);
       const response = await result.response;
-      const botMessage: Message = { role: 'bot', content: response.text() }
-      setMessages(prev => [...prev, botMessage])
+      const text = response.text();
+
+      const botMessage: Message = { role: 'bot', content: text }
+      setMessages((prev) => [...prev, botMessage])
     } catch (error) {
       console.error('Error generating response:', error)
       const errorMessage: Message = { role: 'bot', content: 'Sorry, I encountered an error. Please try again.' }
-      setMessages(prev => [...prev, errorMessage])
+      setMessages((prev) => [...prev, errorMessage])
     } finally {
       setIsLoading(false)
     }
@@ -52,41 +55,38 @@ export default function Chat() {
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
-      <CardContent className="p-4">
-        <ScrollArea className="h-[400px] pr-4">
-          <div ref={scrollAreaRef}>
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`mb-4 ${
-                  message.role === 'user' ? 'text-right' : 'text-left'
+      <CardContent className="p-6">
+        <ScrollArea className="h-[400px] pr-4" ref={scrollAreaRef}>
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={`mb-4 ${
+                message.role === 'user' ? 'text-right' : 'text-left'
+              }`}
+            >
+              <span
+                className={`inline-block p-2 rounded-lg ${
+                  message.role === 'user'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-800'
                 }`}
               >
-                <span
-                  className={`inline-block p-2 rounded-lg ${
-                    message.role === 'user'
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-gray-200 text-gray-800'
-                  }`}
-                >
-                  {message.content}
-                </span>
-              </div>
-            ))}
-          </div>
+                {message.content}
+              </span>
+            </div>
+          ))}
         </ScrollArea>
-        <div className="mt-4 flex">
+        <form onSubmit={handleSubmit} className="mt-4 flex">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
             className="flex-grow mr-2"
           />
-          <Button onClick={sendMessage} disabled={isLoading}>
+          <Button type="submit" disabled={isLoading}>
             {isLoading ? 'Sending...' : 'Send'}
           </Button>
-        </div>
+        </form>
       </CardContent>
     </Card>
   )
