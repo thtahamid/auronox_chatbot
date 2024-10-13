@@ -8,9 +8,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Query parameter is required' });
   }
 
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (!apiKey) {
+    console.error('YouTube API key is not set');
+    return res.status(500).json({ error: 'YouTube API key is not configured' });
+  }
+
   const youtube = google.youtube({
     version: 'v3',
-    auth: process.env.YOUTUBE_API_KEY // Make sure this is set in your .env.local file
+    auth: apiKey
   });
 
   try {
@@ -28,8 +34,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })) || [];
 
     res.status(200).json(videos);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching YouTube videos:', error);
-    res.status(500).json({ error: 'Failed to fetch YouTube videos' });
+    res.status(500).json({ error: 'Failed to fetch YouTube videos', details: error.message });
   }
 }
